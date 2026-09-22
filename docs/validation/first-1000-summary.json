@@ -1,0 +1,61 @@
+{
+  "status": "ok",
+  "data_kind": "real-CMS-open-data",
+  "created_utc": "2026-09-16T13:34:40.503162+00:00",
+  "configuration": {
+    "source": "root://eospublic.cern.ch//eos/opendata/cms/derived-data/AOD2NanoAODOutreachTool/Run2012BC_DoubleMuParked_Muons.root",
+    "tree": "Events",
+    "entry_start": 0,
+    "entry_stop": 1000,
+    "timeout_seconds": 20,
+    "branches": [
+      "nMuon",
+      "Muon_pt",
+      "Muon_eta",
+      "Muon_phi",
+      "Muon_mass",
+      "Muon_charge"
+    ]
+  },
+  "source_record": "https://opendata.cern.ch/record/12342",
+  "tree_entries_total": 61540413,
+  "entry_start": 0,
+  "entry_stop_requested": 1000,
+  "entry_stop_effective": 1000,
+  "entries_read": 1000,
+  "sample_is_random": false,
+  "branch_types": {
+    "nMuon": "1000 * uint32",
+    "Muon_pt": "1000 * var * float32",
+    "Muon_eta": "1000 * var * float32",
+    "Muon_phi": "1000 * var * float32",
+    "Muon_mass": "1000 * var * float32",
+    "Muon_charge": "1000 * var * int32"
+  },
+  "muon_multiplicity_counts": {
+    "0": 23,
+    "1": 105,
+    "2": 554,
+    "3": 192,
+    "4": 78,
+    "5": 36,
+    "6": 5,
+    "7": 3,
+    "8": 1,
+    "9": 1,
+    "10": 1,
+    "13": 1
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-6.1.155+-x86_64-with-glibc2.43",
+    "packages": {
+      "cms-dimuon-starter": "0.1.0",
+      "uproot": "5.7.6",
+      "awkward": "2.13.0",
+      "numpy": "2.5.3",
+      "xrootd": "5.9.7"
+    }
+  },
+  "note": "Inspection only: no physics cuts, mass reconstruction, or spectrum produced."
+}

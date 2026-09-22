@@ -1,0 +1,15 @@
+{
+  "source": "root://eospublic.cern.ch//eos/opendata/cms/derived-data/AOD2NanoAODOutreachTool/Run2012BC_DoubleMuParked_Muons.root",
+  "tree": "Events",
+  "entry_start": 0,
+  "entry_stop": 1000,
+  "timeout_seconds": 20,
+  "branches": [
+    "nMuon",
+    "Muon_pt",
+    "Muon_eta",
+    "Muon_phi",
+    "Muon_mass",
+    "Muon_charge"
+  ]
+}
