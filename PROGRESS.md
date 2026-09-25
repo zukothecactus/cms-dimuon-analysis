@@ -39,3 +39,41 @@ Read `entries_read`, `entry_start`, `entry_stop_effective`, `branch_types`, and 
 Since access failed, I kept the actual error and continued with the synthetic path. An access failure is acceptable on the 1st day; falsely claiming that the real sample was read is not.
 
 Follow one command from `cli.py` into `config.py` and `inspection.py`, so that you can find the exact lines that enforce entry bounds and the exact lines that mark the synthetic fixture.
+
+
+DAY 1:
+'''Baseline selection
+
+selection.py 
+    - masks and cutflow are created
+    - first filter is the 2 muon filter
+    - second filter is the opposite charge filter
+    - cutflow is the report consisting of the number of muons that passed each filter
+    - apply_baseline_selection
+        - the method that generates the report and returns the mask
+        - takes 2 arguments
+        - 1st argument:  all the events that have to be filtered
+        - 2nd argument: all the charges that have to be filtered
+        - the returning values are both masks and the cutflow report
+
+'''
+'''Physics
+
+physics.py
+    - the formula for calculating the invariant mass of two muons
+    - calculate_invariant_mass(muon1, muon2)
+        - method that calculates and returns the invariant mass
+        - it takes 2 muons, that passed the selection proccess, and uses their Azumuthal angle, pseudorapidity, transversal momentum and mass, to calculate the invariant mass of the parent system
+
+'''
+''' Analysis and plotting
+
+analysis.py
+    run_baseline_analysis(file_path)
+        - first we import the data from one of the root files
+        - we get to the root file using the given path
+        - we access the root "Events" tree, and separate the data into branches
+        - after the application of both masks on the list of events, we drop the invalid ones, and prepare the left-over muons for the invariant mass calculations
+        - at the end we generate the histogram and plot the data
+        - the created plot is then exported to "outputs/baseline_mass_spectrum.png'
+'''
