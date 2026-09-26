@@ -77,3 +77,54 @@ analysis.py
         - at the end we generate the histogram and plot the data
         - the created plot is then exported to "outputs/baseline_mass_spectrum.png'
 '''
+
+DAY 2:
+Chunked selection and testing
+
+selection.py
+    - threshold filter, since muons with lower GeV readings are considered noise
+    apply_pt_threshold(pt1, pt2, threshold)
+        -checks if both muons have a transverse momemtum above or at the threshold
+        - creates a mask for the pairs
+        - returns a mask and a count of muons
+
+analysis.py
+    - modified to work as a chunked analysis, instead of a baseline one
+    - plotting is hidden in the background, since showing chunked plotting would use a lot or resources and time
+    - uproot.iterate() instead of tree.array(), because of performance
+    
+    run_baseline_analysis(file_path) ---> run_chunked_analysis(...)
+        - args:
+            file_path: str| Path,
+            entry_start: int = 0,
+            entry_stop: int = 10000,
+            chunk_size : int = 1000,
+            thresholds: list[float] | None = None,
+            output_plot_path: str | Path = "outputs/threshold_mass_spectrum.png"
+        
+        - instead of storing giant invariant mass arrays, that we plot at the end, we use predefined fixed mass bins and fill them as we go, to save memory, so that our computer doesnt crash because of the memory lack
+        - to create these bins we use np.linspace, which creates a ranged sequence of evenly spaced numbers 
+        - data count is accummulated in dictionaries, instead of being alll stored in memory
+            - we have dictionaries for those events that passed the baseline_selection (2 muons and opposite charge), that passed the pt_threshold filter and a dictonary for the histograms for each of the threshold cases
+        - as we do through the data that uproot.iterate obrains, we add the results to the dictionaries
+            - as soon as we apply the baseline_selection, we append the results to the total_cutflow distionary
+            - as soon as we apply the pt_threshold, we append the result to the scan_cutflow (*could have been named better ngl)
+        - for each of the thresholds inside the list, we calculate the invariant mass for those that passed the pt_threshold filter, and count the invariant masses. After that we place them in the histogram distionary
+        - instead of plotting a single plot, we create one for each of the thresholds, and we do it headless, so that it doesnt waste resouces
+    
+cli.py
+    - updated our parser so that is can match the changes inside of analysis.py, for the analyze command
+
+tests/test_chunking.py
+    - testing if the number of events, which are processed, is independent of the chunk size
+    test_chunk_size_independance(demo_data, tmp_path)
+
+tests/test_physics.py
+    - basic tests for the physics calculations
+    test_calculate_invariant_mass_back_to_back()
+    test_calculate_invariant_mass_at_rest()
+
+tests/test_selection.py
+    - basic tests for the selection process
+    test_apply_baseline_selection_synthetic()
+    test_apply_pt_threshold_synthetic()

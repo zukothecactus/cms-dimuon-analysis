@@ -31,9 +31,16 @@ def apply_baseline_selection(nMuon, Muon_charge):
     
     cutflow = {
         "initial": initial_events,
-        "exactly_two_muons": events_after_two_muons,
-        "opposite_charge": events_after_opposite_charge
+        "exactly_two_muons": int(events_after_two_muons),
+        "opposite_charge": int(events_after_opposite_charge)
     } 
     
     return two_muons_mask, opposite_charge_mask, cutflow
     
+def apply_pt_threshold(pt1, pt2, threshold):
+    '''
+        Both muons have to have transverse momentum above or at the threshold
+        Returns the mask and the count of events passing the cut
+    '''
+    pt_mask = (pt1>=threshold) & (pt2>=threshold)
+    return pt_mask, int(sum(pt_mask)) #cast to int for serialilzation
