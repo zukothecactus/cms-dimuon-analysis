@@ -128,3 +128,82 @@ tests/test_selection.py
     - basic tests for the selection process
     test_apply_baseline_selection_synthetic()
     test_apply_pt_threshold_synthetic()
+
+Day 3
+Resonance Peak Fitting 
+
+src/dimuon/fitting.py
+    class FitResult
+        - immutable class (frozen = True) that is used for storing physical parameters, statistical uncertainties, goodness of fit metrics
+        - physical parameters
+            - signal_yield     - total number of signals
+            - fitted_mass      - invariant mass at the peak (centered at a whole value ex. at bin 3)
+            - resolution_sigma - Gaussian detector resolution parameter
+            - background_yield - total estimated number of background signals (noise) within a mass window
+        - every physical parameter has a property for it and its error
+        - chi2_ndof        - Reduced chi-squared metric (per degree of freedom)
+        - significance     - Signal significance ration (how significante is the peak / how far above the Poisson distribution)
+    
+    composite_model()
+        - Method calculates the expected event counts per bin (interval)
+        - Method that takes in parameter needed for both the signal and the background distribution
+        - Parameters
+            - S         - Signal yield normalization factor (number of events under the peak)
+            - m0        - Central resonance mass peak
+            - sigma     - Gaussian resolution width parameter (standard deviation of mass resolution)
+            - B         - Background yield normalization factor (number of background signals (noise) within a mass window)
+            - lambda_bg - Exponential background decay constant rate
+            - m_min     - lower threshold of the active mass window
+            - bin_width - Bin width used to convert continued densities into discrete bin count estimates (delta m)
+        - Returns an array of expecten bin count yields corresponding to mass array m
+            - the sum of signal and background distributions, multiplied by the bin_width
+            - when you multiply the continuous composite (created by adding the 2 distributions) by bin_width, you get the expected event counts per bin
+
+    fit_resonance_window()
+        - Method that takes in the bin elements (centers, yields of each bin, and the mass window), initial parameter guesses and the name of the resonance being fitted
+        - Based on the mass window, we create a mask so that only those events that fall into said bins, are taken into consideration
+        - That mask is then used to obtain the array of bin_centers (masses) and the array of yields (event counts inside the bins)
+        - bin_width is, at least one, but can be more, depending on the array of centers (masses)
+            - aiming at uniform bin spacing
+        - sigma_y - Poisson Error Estimation (Statistical uncertainty, per bin)
+        - curve_fit is a method that returns the optimal parameters and covariace matrix
+            - covariace matrix
+                - diagonal elements store the variance of each individual variable (sigma_i**2)
+                - non diagonal elements store the covariance between pairs of variables (if x increases, how is y effected aka. does increasing the S yield, cause the B yield to decrease)
+        - perr is designed to take the errors for each variable (parameter) on the matrix diagonal 
+        - chi**2 
+            - It quantifies the difference between your observed (fitted) and predicted model, while taking into consideration the uncertainty of those measurements
+            - its squared for 2 reasons:
+                1. Positive and negative deviations dont cancel each other out
+                2. Extreme outliers are heavily penalized
+            - if its 0 then you have a perfect fit, where every single data point sits on the line
+            - if its small, then the matching is well done
+            - if its very large, our model fails to describe the underlying data
+        - n Degrees of Freedom (ndof)
+            - Number of points that dont fit onto the line, for which it can be checked if the fall onto the line
+            - Fitted parameters are excluded
+            - Number of histogram bins minus 5 fitted parameters(S, m0, sigma, B, lambda_bg)
+        - Reduced Chi**2
+            - Raw Chi**2 grows automatically, every time you add a data point, so to counter-balance that, it gets divided by ndof
+            ~= 1 - good fit
+            >> 1 - poor fit (over constrained)
+            << 1 - over fit (overestimated errors)
+        - We calculate the significance of the resonance mass peak, and with that, we have all the parameters contained inside of fitted data
+        - fit_curve is a 1D NumPy array containing the predicted bin yield counts calculated by our fitted model across the mass window.
+        - Our data and the fit_curve is evaluated at the sime exact bin centar points, sot the plotting becomes super straight forward (model is plotted directly on top of our histagram bins)
+        
+src/dimuon/cli.py
+    - Analyze command has been expanded (it can now take two more arguments: fit_min (lower mass boundary) and fit_max (upper mass boundary))
+
+src/dimuon/analysis.py
+    - Expanded chunked analysis with fitting
+    - Plotting the bins and fit curve accordingly
+
+tests/test_fitting.py
+    test_fit_resonance_window_synthetic_recovery()
+        -  Generates synthetic signal and background data, fits it, and checks if the fitted parameters are close to the true values.
+        
+
+
+
+    

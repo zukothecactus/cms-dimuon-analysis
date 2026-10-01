@@ -7,6 +7,7 @@ matplotlib.use('Agg')  # Use a non-interactive backend for plotting
 import matplotlib.pyplot as plt
 from dimuon.selection import apply_baseline_selection, apply_pt_threshold
 from dimuon.physics import calculate_invariant_mass
+from dimuon.fitting import fit_resonance_window
 
 def run_chunked_analysis(
     file_path: str| Path,
@@ -14,6 +15,8 @@ def run_chunked_analysis(
     entry_stop: int = 10000,
     chunk_size : int = 1000,
     thresholds: list[float] | None = None,
+    mass_bins: np.ndarray | None = None,
+    fit_window: tuple[float, float] | None = None,
     output_plot_path: str | Path = "outputs/threshold_mass_spectrum.png"
     ):
     '''
@@ -26,11 +29,15 @@ def run_chunked_analysis(
     
     if thresholds is None:
         thresholds = [0,5,10,15,20] #GeV
+        
     
     #instead of using arrays and storing giant invariant mass arrays, that we plot at the end
     # we pre-define fixed mass bins and fill them as we go, to save memory, using uproot.iterate()
     
-    mass_bins = np.linspace(2, 120, 51) #generates a sequence of 51 numbers from 2 to 120, which will be used as the bin edges for the histogram
+    if mass_bins is None:
+        mass_bins = np.linspace(2, 120, 119) #generates a sequence of 119 numbers from 2 to 120, which will be used as the bin edges for the histogram
+    
+    bin_centers = 0.5*(mass_bins[:-1] + mass_bins[1:]) #calculate the bin centers from the bin edges
     
     #global accumulators, instead of storing all the data in memory, we will accumulate the counts in these dictionaries
     total_cutflow = {"initial": 0, "exactly_two_muons": 0, "opposite_charge": 0}
@@ -103,6 +110,25 @@ def run_chunked_analysis(
             fill=True,
             label=f"pt >= {threshold} GeV ({passing} events)"
         )      
+        
+    fit_summary = {}
+    if fit_window is not None:
+        try:
+            primary_counts = histograms[thresholds[0]]  # Use the histogram for the lowest threshold for fitting
+            initial_guess = {"S": 500.0, "m0": (fit_window[0] + fit_window[1]) / 2.0, "sigma": 0.1, "B": 1000.0, "lambda_bg": 0.2}
+            fit_result, fit_curve = fit_resonance_window(bin_centers, primary_counts, fit_window, initial_guess, resonance_name="J/Psi")
+            m_mask = (bin_centers >= fit_window[0]) & (bin_centers <= fit_window[1])
+            plt.plot(
+                bin_centers[m_mask],
+                fit_curve,
+                "--r",
+                linewidth=2,
+                label=f"Fit m0={fit_result.fitted_mass:.3f} GeV, S/sqrt(S+B)={fit_result.significance:.1f}",
+            )
+            fit_summary = fit_result.__dict__  # Convert dataclass to dictionary for easier JSON serialization
+        except Exception as e:
+            print(f"Fitting skipped due to error: {e}")
+            
     plt.xlabel("Invariant Mass (GeV)")
     plt.ylabel("No. Events")
     plt.title("Dimuon Invariant Mass Spectrum (Selection Sensitivity)")
@@ -114,7 +140,7 @@ def run_chunked_analysis(
     plt.savefig(plot_path)
     plt.close()
 
-    final_cutflow = {"baseline":total_cutflow, "pt_scan": scan_cutflow}
+    final_cutflow = {"baseline":total_cutflow, "pt_scan": scan_cutflow, "fit_summary": fit_summary}
     print("Full cutflow summary:", final_cutflow)
 
     return final_cutflow

@@ -43,8 +43,9 @@ def main(argv=None) -> int:
     analyze.add_argument("--entry-stop", type=int, default=10000, help = "Stopping event index")
     analyze.add_argument("--chunk-size", type=int, default=1000, help = "Size of each chunk")
     analyze.add_argument("--output-plot", default="outputs/threshold_mass_spectrum.png", help = "Path to save the output plot")
-    analyze.add_argument("--output_json", default="outputs/baseline_analysis.json", help = "Path to save the cutflow JSON")
-
+    analyze.add_argument("--output-json", default="outputs/baseline_analysis.json", help = "Path to save the cutflow JSON")
+    analyze.add_argument("--fit-min", type=float, default=None, help="Fit window lower mass bound (GeV)")
+    analyze.add_argument("--fit-max", type=float, default=None, help="Fit window upper mass bound (GeV)")
     args = parser.parse_args(argv)
     #business logic for the CLI commands
     try:
@@ -59,8 +60,7 @@ def main(argv=None) -> int:
                 entry_start=args.entry_start,
                 entry_stop=args.entry_stop,
                 chunk_size=args.chunk_size,
-                output_plot_path=args.output_plot,
-                output_json_path=args.output_json
+                output_plot_path=args.output_plot
             )
             emit({"status": "success", "cutflow": cutflow}, args.output_json)
         else:
