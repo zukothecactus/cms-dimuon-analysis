@@ -102,7 +102,7 @@ def run_chunked_analysis(
     # we pre-define fixed mass bins and fill them as we go, to save memory, using uproot.iterate()
     
     if mass_bins is None:
-        mass_bins = np.linspace(2, 120, 119) #generates a sequence of 119 numbers from 2 to 120, which will be used as the bin edges for the histogram
+        mass_bins = np.linspace(2, 120, 11801) #generates a sequence of 11801 numbers from 2 to 120, which will be used as the bin edges for the histogram
     
     bin_centers = 0.5*(mass_bins[:-1] + mass_bins[1:]) #calculate the bin centers from the bin edges
     
@@ -187,7 +187,7 @@ def run_chunked_analysis(
                     "B": 1000.0, 
                     "lambda_bg": 0.2
                 }
-                res_name = "J/Psi"
+                res_name = "JPsi"
 
             fit_result, fit_curve = fit_resonance_window(bin_centers, primary_counts, fit_window, initial_guess, resonance_name=res_name)
             m_mask = (bin_centers >= fit_window[0]) & (bin_centers <= fit_window[1])

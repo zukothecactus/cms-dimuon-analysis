@@ -46,7 +46,7 @@ Follow one command from `cli.py` into `config.py` and `inspection.py`, so that y
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DAY 1 
 
-'''Baseline selection-----------------------------------------------------------------------
+'''Baseline selection -----------------------------------------------------------------------
 
 selection.py 
     - masks and cutflow are created
@@ -61,7 +61,7 @@ selection.py
         - the returning values are both masks and the cutflow report
 
 '''
-'''Physics------------------------------------------------------------------------------
+'''Physics ------------------------------------------------------------------------------
 
 physics.py
     - the formula for calculating the invariant mass of two muons
@@ -70,7 +70,7 @@ physics.py
         - it takes 2 muons, that passed the selection proccess, and uses their Azumuthal angle, pseudorapidity, transversal momentum and mass, to calculate the invariant mass of the parent system
 
 '''
-''' Analysis and plotting-------------------------------------------------------------
+''' Analysis and plotting -------------------------------------------------------------
 
 analysis.py
     run_baseline_analysis(file_path)
@@ -88,7 +88,7 @@ analysis.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DAY 2:
 
-Chunked selection and testing-----------------------------------------------------------------
+Chunked selection and testing -----------------------------------------------------------------
 
 selection.py
     - threshold filter, since muons with lower GeV readings are considered noise
@@ -223,7 +223,7 @@ tests/test_fitting.py
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Day 4
-Resonance Peak Fitting for Z bosons-----------------------------------------------------
+Resonance Peak Fitting for Z bosons -----------------------------------------------------
 
 src/dimuon/analysis.py
     - The parameters are passed for fitting, depending on the type of event
@@ -234,7 +234,7 @@ src/dimuon/analysis.py
         - Z bozon decays as a result of a weak force and it has a large personal (natural) width of ~2,5GeV, hence the increase of the "sigma" parameter inside od our gaussian fit (signal distribution)
         - Fbkg is also a lot smaller than at the energy value of 3GeV
     
-Process-Based Parallelism--------------------------------------------------------------
+Process-Based Parallelism --------------------------------------------------------------
 
 analysis.py
 
@@ -251,7 +251,7 @@ run_chunked_analysis()
     - Each worker calls the _process_entry_range() method on their slice and returns the results
 
 
-Decoupled Visualization-----------------------------------------------------------------------
+Decoupled Visualization -----------------------------------------------------------------------
 
 analysis.py()
     - Up to this point, only the general graph was plotted, and that is fine for the general gistribution
@@ -262,7 +262,24 @@ analysis.py()
         - The focus is exclusively on the resonance window
         - The plot overlays the theoretical composite model (signal + background) onto discrete data pints
     - Poisson Statistics
-        - HEP error bars, capping the minimum uncertainty at 1. to prevent zero-division errors during siginificance calculations
+        - HEP error bars, capping the minimum uncertainty at 1, to prevent zero-division errors during siginificance calculations
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Day 5
 
-    
+Plotting Fix (Bin Number Increase) ----------------------------------------------------
+- The original, smaller, number of bins, made the "fit" figure invincible, so the number of bins was increased, by a lot
+
+Vectorization using Scikit-HEP (vector) -------------------------------------------------
+
+src/dimuon/physics.py
+- Vector library natively understands Awkward Arrays and handles 4-momentum kinematics under the hood in C++
+    - Also makes code a lot cleaner, since you dont have to do the calculations in steps, and can just leave it to the library
+
+Dockerization ------------------------------------------------------------
+- Dockerfile
+- .dockerignore
+- Created a docker image for the project
+- The image cannot be ran in succession if the data set has not been downloaded loacally, in the right directory

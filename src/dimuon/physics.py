@@ -1,22 +1,30 @@
 import numpy as np
 import awkward as ak
+import vector
 
 def calculate_invariant_mass(muon1, muon2):
     """Calculates the invariant mass of a system composed of two muons.
+    Calculations are done using the Scikit-HEP vector.
     
     Args:
         muon1 (array): pt, eta, phi, mass of muon1
         muon2 (array): pt, eta, phi, mass of muon2
     """
-    pt1 = muon1[0]
-    eta1 = muon1[1]
-    phi1 = muon1[2]
-    mass1 = muon1[3]
+    vector1 = vector.zip({
+        "pt" : muon1[0],
+        "eta" : muon1[1],
+        "phi" : muon1[2],
+        "mass" : muon1[3]
+    })
 
-    pt2 = muon2[0]
-    eta2 = muon2[1]
-    phi2 = muon2[2]
-    mass2 = muon2[3]
+    vector2 = vector.zip({
+        "pt" : muon2[0],
+        "eta" : muon2[1],
+        "phi" : muon2[2],
+        "mass" : muon2[3]
+    })
+    
+    '''Old 4-momentum calculation using numpy and awkward arrays. This is commented out in favor of the vector library, which is more efficient and easier to use for 4-vector operations. Uses C++ under the hood for performance.
     
     # Cartesian momentum components for muon 1
     px1 = pt1 * np.cos(phi1)
@@ -52,3 +60,7 @@ def calculate_invariant_mass(muon1, muon2):
     invariant_mass = np.sqrt(invariant_mass_squared)
     
     return invariant_mass
+    '''
+    
+    parent_system = vector1 + vector2
+    return parent_system.mass
