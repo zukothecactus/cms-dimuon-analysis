@@ -41,8 +41,12 @@ Since access failed, I kept the actual error and continued with the synthetic pa
 Follow one command from `cli.py` into `config.py` and `inspection.py`, so that you can find the exact lines that enforce entry bounds and the exact lines that mark the synthetic fixture.
 
 
-DAY 1:
-'''Baseline selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DAY 1 
+
+'''Baseline selection-----------------------------------------------------------------------
 
 selection.py 
     - masks and cutflow are created
@@ -57,7 +61,7 @@ selection.py
         - the returning values are both masks and the cutflow report
 
 '''
-'''Physics
+'''Physics------------------------------------------------------------------------------
 
 physics.py
     - the formula for calculating the invariant mass of two muons
@@ -66,7 +70,7 @@ physics.py
         - it takes 2 muons, that passed the selection proccess, and uses their Azumuthal angle, pseudorapidity, transversal momentum and mass, to calculate the invariant mass of the parent system
 
 '''
-''' Analysis and plotting
+''' Analysis and plotting-------------------------------------------------------------
 
 analysis.py
     run_baseline_analysis(file_path)
@@ -76,10 +80,15 @@ analysis.py
         - after the application of both masks on the list of events, we drop the invalid ones, and prepare the left-over muons for the invariant mass calculations
         - at the end we generate the histogram and plot the data
         - the created plot is then exported to "outputs/baseline_mass_spectrum.png'
+        - plt.stairs() was used to layer the varying Pt thresholds on top of each other, so we can visually assess how aggressive momoentum cuts eliminate low-mass background events
 '''
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 DAY 2:
-Chunked selection and testing
+
+Chunked selection and testing-----------------------------------------------------------------
 
 selection.py
     - threshold filter, since muons with lower GeV readings are considered noise
@@ -129,8 +138,13 @@ tests/test_selection.py
     test_apply_baseline_selection_synthetic()
     test_apply_pt_threshold_synthetic()
 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Day 3
-Resonance Peak Fitting 
+Resonance Peak Fitting ------------------------------------------------------------------------
 
 src/dimuon/fitting.py
     class FitResult
@@ -204,6 +218,51 @@ tests/test_fitting.py
         -  Generates synthetic signal and background data, fits it, and checks if the fitted parameters are close to the true values.
         
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Day 4
+Resonance Peak Fitting for Z bosons-----------------------------------------------------
+
+src/dimuon/analysis.py
+    - The parameters are passed for fitting, depending on the type of event
+    - The type is determined by the mass window (fit_window)
+    - Z bosons are much heavier than J/Phi mesons
+    - Resonance width is also different
+        - J/Phi s width is almost solely reliant on the detectors resolution (how accurate it is)
+        - Z bozon decays as a result of a weak force and it has a large personal (natural) width of ~2,5GeV, hence the increase of the "sigma" parameter inside od our gaussian fit (signal distribution)
+        - Fbkg is also a lot smaller than at the energy value of 3GeV
+    
+Process-Based Parallelism--------------------------------------------------------------
+
+analysis.py
+
+_process_entry_range()
+    - Python's GLI prevents multiple threads from executiong CPU-bound math operations simultaneously, so to achieve parallelism, we used ProcessPoolExecutor
+    - The main script calculates how many total events need to be processed and divideds them among workers
+    - Each worker does the selection logic and returns its own cutflow dictionaried and mass histograms.
+    - The results are summed up sequentially into a big dictionary by the main process
+    - This way we avoid race conditions entirely
+    - Since the boundaries needed to be set for uproot.iterate, to stop it from consumming the entirety of the ROOT file, we used the tree itself, and then iterated on it
+
+run_chunked_analysis()
+    - This is where we split the work (if the number of workers is not specified, the default is a sequentially operation)
+    - Each worker calls the _process_entry_range() method on their slice and returns the results
+
+
+Decoupled Visualization-----------------------------------------------------------------------
+
+analysis.py()
+    - Up to this point, only the general graph was plotted, and that is fine for the general gistribution
+    - Focus also needed to be put on the resonance peaks themselves, for the analysis to be more thorough (easier to spot an error)
+    - Macroscopic View
+        - The main plot remains untouched, where you have the full invariant mass spectrum rendered
+    - Microscopic Fit
+        - The focus is exclusively on the resonance window
+        - The plot overlays the theoretical composite model (signal + background) onto discrete data pints
+    - Poisson Statistics
+        - HEP error bars, capping the minimum uncertainty at 1. to prevent zero-division errors during siginificance calculations
 
 
     

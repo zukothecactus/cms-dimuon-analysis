@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
-      - name: Set up Python 3.12
-        run: uv sync --locked --python 3.12
-
       - name: Run unit tests
         run: uv run pytest -q
       # Tests generate synthetic fixtures. No CERN network or full dataset is needed.

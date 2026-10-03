@@ -42,6 +42,7 @@ def main(argv=None) -> int:
     analyze.add_argument("--entry-start", type=int, default=0, help = "Starting event index")
     analyze.add_argument("--entry-stop", type=int, default=10000, help = "Stopping event index")
     analyze.add_argument("--chunk-size", type=int, default=1000, help = "Size of each chunk")
+    analyze.add_argument("--num-workers", type=int, default=1, help="Number of parallel processes")
     analyze.add_argument("--output-plot", default="outputs/threshold_mass_spectrum.png", help = "Path to save the output plot")
     analyze.add_argument("--output-json", default="outputs/baseline_analysis.json", help = "Path to save the cutflow JSON")
     analyze.add_argument("--fit-min", type=float, default=None, help="Fit window lower mass bound (GeV)")
@@ -55,11 +56,16 @@ def main(argv=None) -> int:
             destination = create_demo(args.output)
             emit({"status": "created", "data_kind": "synthetic", "path": str(destination)}, None)
         elif args.command == "analyze":
+            fit_window = None
+            if args.fit_min is not None and args.fit_max is not None:
+                fit_window = (args.fit_min, args.fit_max)
             cutflow = run_chunked_analysis(
                 file_path=args.input,
                 entry_start=args.entry_start,
                 entry_stop=args.entry_stop,
                 chunk_size=args.chunk_size,
+                num_workers=args.num_workers,
+                fit_window=fit_window,
                 output_plot_path=args.output_plot
             )
             emit({"status": "success", "cutflow": cutflow}, args.output_json)
