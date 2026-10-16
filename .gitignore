@@ -10,7 +10,6 @@ build/
 .env
 .env.*
 data/
-outputs/
 private/
 *.root
 *.pdf

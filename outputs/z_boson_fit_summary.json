@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "cutflow": {
+    "baseline": {
+      "initial": 100000,
+      "exactly_two_muons": 48976,
+      "opposite_charge": 37183
+    },
+    "pt_scan": {
+      "pt_min_0_GeV": 37183,
+      "pt_min_5_GeV": 33490,
+      "pt_min_10_GeV": 22084,
+      "pt_min_15_GeV": 11029,
+      "pt_min_20_GeV": 8101
+    },
+    "fit_summary": {
+      "resonance_name": "Z_Boson",
+      "signal_yield": 4337.030438139895,
+      "signal_yield_error": 73.5400636167457,
+      "fitted_mass": 90.82041418973792,
+      "fitted_mass_error": 0.03508680403234392,
+      "resolution_sigma": 2.0286835151251075,
+      "resolution_sigma_error": 0.03271489684012581,
+      "background_yield": 3713.1030399437855,
+      "background_yield_error": 586.0510485911442,
+      "chi2_ndof": 0.5924575649512132,
+      "significance": 48.33825065932062
+    }
+  }
+}

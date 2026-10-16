@@ -1,0 +1,107 @@
+{
+  "status": "ok",
+  "data_kind": "synthetic-demo-not-physics-data",
+  "created_utc": "2026-09-22T19:47:56.128874+00:00",
+  "configuration": {
+    "source": "data/synthetic-demo.root",
+    "tree": "Events",
+    "entry_start": 0,
+    "entry_stop": 1000,
+    "timeout_seconds": 20,
+    "branches": [
+      "nMuon",
+      "Muon_pt",
+      "Muon_eta",
+      "Muon_phi",
+      "Muon_mass",
+      "Muon_charge"
+    ]
+  },
+  "source_record": null,
+  "tree_entries_total": 5,
+  "entry_start": 0,
+  "entry_stop_requested": 1000,
+  "entry_stop_effective": 5,
+  "entries_read": 5,
+  "sample_is_random": false,
+  "branch_types": {
+    "nMuon": "5 * int32",
+    "Muon_pt": "5 * var * float64",
+    "Muon_eta": "5 * var * float64",
+    "Muon_phi": "5 * var * float64",
+    "Muon_mass": "5 * var * float64",
+    "Muon_charge": "5 * var * int32"
+  },
+  "muon_multiplicity_counts": {
+    "0": 1,
+    "1": 1,
+    "2": 2,
+    "3": 1
+  },
+  "preview_first_three_events": [
+    {
+      "nMuon": 0,
+      "Muon_pt": [],
+      "Muon_eta": [],
+      "Muon_phi": [],
+      "Muon_mass": [],
+      "Muon_charge": []
+    },
+    {
+      "nMuon": 1,
+      "Muon_pt": [
+        12.0
+      ],
+      "Muon_eta": [
+        0.1
+      ],
+      "Muon_phi": [
+        0.0
+      ],
+      "Muon_mass": [
+        0.1
+      ],
+      "Muon_charge": [
+        1
+      ]
+    },
+    {
+      "nMuon": 2,
+      "Muon_pt": [
+        25.0,
+        30.0
+      ],
+      "Muon_eta": [
+        0.2,
+        -0.2
+      ],
+      "Muon_phi": [
+        0.0,
+        3.0
+      ],
+      "Muon_mass": [
+        0.1,
+        0.1
+      ],
+      "Muon_charge": [
+        1,
+        -1
+      ]
+    }
+  ],
+  "environment": {
+    "python": "3.12.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "cms-dimuon-starter": "0.1.0",
+      "uproot": "5.7.6",
+      "awkward": "2.13.0",
+      "numpy": "2.5.3",
+      "fsspec": "2026.7.0",
+      "fsspec-xrootd": "not installed",
+      "xrootd": "not installed"
+    }
+  },
+  "note": "Inspection only: no physics cuts, mass reconstruction, or spectrum produced.",
+  "events_with_exactly_two_muons": 2
+}

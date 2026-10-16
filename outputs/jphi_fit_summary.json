@@ -1,0 +1,30 @@
+{
+  "status": "success",
+  "cutflow": {
+    "baseline": {
+      "initial": 100000,
+      "exactly_two_muons": 48976,
+      "opposite_charge": 37183
+    },
+    "pt_scan": {
+      "pt_min_0_GeV": 37183,
+      "pt_min_5_GeV": 33490,
+      "pt_min_10_GeV": 22084,
+      "pt_min_15_GeV": 11029,
+      "pt_min_20_GeV": 8101
+    },
+    "fit_summary": {
+      "resonance_name": "JPsi",
+      "signal_yield": 2922.899818622405,
+      "signal_yield_error": 58.186482508355276,
+      "fitted_mass": 3.092534538661731,
+      "fitted_mass_error": 0.0006856870752335088,
+      "resolution_sigma": 0.033376516500752615,
+      "resolution_sigma_error": 0.0005957726012992666,
+      "background_yield": 1168.406843554806,
+      "background_yield_error": 101.57228735383175,
+      "chi2_ndof": 1.9176536418864862,
+      "significance": 45.69649747990749
+    }
+  }
+}

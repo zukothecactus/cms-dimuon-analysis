@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "cutflow": {
+    "baseline": {
+      "initial": 61540413,
+      "exactly_two_muons": 31104343,
+      "opposite_charge": 24067843
+    },
+    "pt_scan": {
+      "pt_min_0_GeV": 24067843,
+      "pt_min_5_GeV": 22363477,
+      "pt_min_10_GeV": 15147769,
+      "pt_min_15_GeV": 7751783,
+      "pt_min_20_GeV": 5702576
+    }
+  }
+}
